@@ -22,7 +22,7 @@ public class Cliente extends Pessoa {
     @OneToMany(mappedBy = "cliente")
     private List<Chamado> chamados = new ArrayList<>();
 
-    // Adicionamos a coleção de perfis AQUI, com sua própria tabela
+    // A lista de perfis é declarada E INICIALIZADA aqui
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "PERFIS_CLIENTE")
     private Set<Integer> perfis = new HashSet<>();
@@ -41,6 +41,11 @@ public class Cliente extends Pessoa {
         this.perfis.add(perfil.getCodigo());
     }
 
+    public Set<Perfil> getPerfis() {
+		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
+	}
+    
+    // Getters e Setters para 'chamados'
     public List<Chamado> getChamados() {
         return chamados;
     }
@@ -48,8 +53,4 @@ public class Cliente extends Pessoa {
     public void setChamados(List<Chamado> chamados) {
         this.chamados = chamados;
     }
-    
-    public Set<Perfil> getPerfis() {
-		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
-	}
 }

@@ -1,10 +1,15 @@
 package com.example.demo.domai;
 
 import java.io.Serializable;
+import java.time.LocalDateTime; // IMPORT CORRIGIDO
+import java.util.Objects;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @MappedSuperclass
 public abstract class Pessoa implements Serializable {
@@ -19,12 +24,13 @@ public abstract class Pessoa implements Serializable {
     protected String email;
     protected String senha;
     
-    // Construtor vazio
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    protected LocalDateTime dataCriacao = LocalDateTime.now(); // TIPO CORRIGIDO
+    
     public Pessoa() {
         super();
     }
     
-    // Construtor com parâmetros
     public Pessoa(Integer id, String nome, String cpf, String email, String senha) {
         this.id = id;
         this.nome = nome;
@@ -33,5 +39,24 @@ public abstract class Pessoa implements Serializable {
         this.senha = senha;
     }
     
-    // Adicione os getters e setters aqui se precisar
+    // GETTERS E SETTERS
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+
+    // GETTER E SETTER CORRIGIDOS
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
 }
