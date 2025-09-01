@@ -1,14 +1,12 @@
 package com.example.demo.domai;
 
 import java.io.Serializable;
-import java.time.LocalDateTime; // IMPORT CORRIGIDO
+import java.time.LocalDateTime;
 import java.util.Objects;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @MappedSuperclass
@@ -25,11 +23,9 @@ public abstract class Pessoa implements Serializable {
     protected String senha;
     
     @JsonFormat(pattern = "dd/MM/yyyy")
-    protected LocalDateTime dataCriacao = LocalDateTime.now(); // TIPO CORRIGIDO
+    protected LocalDateTime dataCriacao = LocalDateTime.now();
     
-    public Pessoa() {
-        super();
-    }
+    public Pessoa() { super(); }
     
     public Pessoa(Integer id, String nome, String cpf, String email, String senha) {
         this.id = id;
@@ -39,7 +35,7 @@ public abstract class Pessoa implements Serializable {
         this.senha = senha;
     }
     
-    // GETTERS E SETTERS
+    // GETTERS E SETTERS COMPLETOS
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getNome() { return nome; }
@@ -50,13 +46,17 @@ public abstract class Pessoa implements Serializable {
     public void setEmail(String email) { this.email = email; }
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
-
-    // GETTER E SETTER CORRIGIDOS
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
+    public LocalDateTime getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+    
+    @Override
+    public int hashCode() { return Objects.hash(cpf, id); }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Pessoa other = (Pessoa) obj;
+        return Objects.equals(cpf, other.cpf) && Objects.equals(id, other.id);
     }
 }

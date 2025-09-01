@@ -1,57 +1,36 @@
 package com.example.demo.domain.num;
 
 public enum Prioridade {
-	BAIXA(0, "BAIXA"),
-	MEDIA(1, "MÉDIA"),
-	ALTA(2, "ALTA");
-	
-	
-	private Integer codigo;
-	private String descricao;
-	
-	
-	
-	private Prioridade(Integer codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
 
+    BAIXA(0, "BAIXA"),
+    MEDIA(1, "MEDIA"),
+    ALTA(2, "ALTA");
 
+    private Integer codigo;
+    private String descricao;
 
-	public Integer getCodigo() {
-		return codigo;
-	}
+    private Prioridade(Integer codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
+    public Integer getCodigo() {
+        return codigo;
+    }
 
+    public String getDescricao() {
+        return descricao;
+    }
 
-	public String getDescricao() {
-		return descricao;
-	}
-
-	
-	
-	
-	public static Prioridade toEnum(Integer codigo) {
-		if(codigo==null) {
-			return null;
-		}
-		
-		for(Prioridade x: Prioridade.values()) {
-			if(codigo.equals(x.getCodigo())) {
-				return x;
-			}
-		}
-		
-		
-		throw new IllegalArgumentException("Prioridade: " + codigo);
-	}
-
-
-
-
-
-	
-	
-	
-
+    public static Prioridade toEnum(Integer cod) {
+        if (cod == null) {
+            return null;
+        }
+        for (Prioridade x : Prioridade.values()) {
+            if (cod.equals(x.getCodigo())) {
+                return x;
+            }
+        }
+        throw new IllegalArgumentException("Prioridade inválida");
+    }
 }

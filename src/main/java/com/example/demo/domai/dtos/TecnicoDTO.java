@@ -1,7 +1,7 @@
 package com.example.demo.domai.dtos;
 
 import java.io.Serializable;
-import java.time.LocalDateTime; // IMPORT CORRIGIDO
+import java.time.LocalDateTime; 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,7 +21,7 @@ public class TecnicoDTO implements Serializable {
 	protected Set<Integer> perfis = new HashSet<>();
 	
 	@JsonFormat(pattern = "dd/MM/yyyy")
-	protected LocalDateTime dataCriacao; // TIPO CORRIGIDO
+	protected LocalDateTime dataCriacao; 
 	
 	public TecnicoDTO() {
 		super();
