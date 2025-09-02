@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
+import com.example.demo.domai.dtos.TecnicoDTO;
 import com.example.demo.domain.num.Perfil;
 
 @Entity
@@ -37,7 +38,13 @@ public class Tecnico extends Pessoa {
         addPerfil(Perfil.TECNICO);
     }
 
-    public void addPerfil(Perfil perfil) {
+    public Tecnico(TecnicoDTO objDTO) {
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	public void addPerfil(Perfil perfil) {
         this.perfis.add(perfil.getCodigo());
     }
     
@@ -53,4 +60,6 @@ public class Tecnico extends Pessoa {
     public void setChamados(List<Chamado> chamados) {
         this.chamados = chamados;
     }
+    
+    
 }

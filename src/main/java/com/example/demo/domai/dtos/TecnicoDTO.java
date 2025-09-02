@@ -1,27 +1,41 @@
 package com.example.demo.domai.dtos;
 
 import java.io.Serializable;
-import java.time.LocalDateTime; 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotBlank;
+
 import com.example.demo.domai.Tecnico;
 import com.example.demo.domain.num.Perfil;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TecnicoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	protected Integer id;
+	
+	@NotBlank(message = "O campo NOME é requerido")
 	protected String nome;
+	
+	@NotBlank(message = "O campo CPF é requerido")
 	protected String cpf;
+	
+	@NotBlank(message = "O campo EMAIL é requerido")
 	protected String email;
+	
+	@NotBlank(message = "O campo SENHA é requerido")
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	protected String senha; // O campo senha
+	
 	protected Set<Integer> perfis = new HashSet<>();
 	
 	@JsonFormat(pattern = "dd/MM/yyyy")
-	protected LocalDateTime dataCriacao; 
+	protected LocalDateTime dataCriacao;
 	
 	public TecnicoDTO() {
 		super();
@@ -37,7 +51,7 @@ public class TecnicoDTO implements Serializable {
 		this.dataCriacao = obj.getDataCriacao();
 	}
 	
-	// GETTERS E SETTERS (CORRIGIDOS)
+	// --- GETTERS E SETTERS COMPLETOS ---
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getNome() { return nome; }
@@ -46,15 +60,21 @@ public class TecnicoDTO implements Serializable {
     public void setCpf(String cpf) { this.cpf = cpf; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
-
     public Set<Perfil> getPerfis() {
         return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
     }
-    
     public void addPerfil(Perfil perfil) {
     	this.perfis.add(perfil.getCodigo());
+    }
+
+    // ESTES SÃO OS MÉTODOS QUE ESTAVAM FALTANDO
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 }

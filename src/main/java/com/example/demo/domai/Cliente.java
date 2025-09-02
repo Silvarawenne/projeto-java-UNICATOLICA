@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import com.example.demo.domai.dtos.ClienteDTO;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -52,5 +52,15 @@ public class Cliente extends Pessoa {
 
     public void setChamados(List<Chamado> chamados) {
         this.chamados = chamados;
+    }
+    
+    public Cliente(ClienteDTO obj) {
+        super();
+        this.id = obj.getId();
+        this.nome = obj.getNome();
+        this.cpf = obj.getCpf();
+        this.email = obj.getEmail();
+        this.senha = obj.getSenha();
+        addPerfil(Perfil.CLIENTE);
     }
 }
