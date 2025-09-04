@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.example.demo.domai.Tecnico;
 import com.example.demo.domai.dtos.TecnicoDTO;
@@ -57,5 +58,19 @@ public class TecnicoResources {
 			return ResponseEntity.ok().body(new TecnicoDTO(obj));
 		
 	}
+	
+	
+	@DeleteMapping (value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Integer id){
+		service.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }

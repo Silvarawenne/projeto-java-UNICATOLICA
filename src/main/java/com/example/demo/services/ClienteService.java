@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domai.Cliente;
+import com.example.demo.domai.Tecnico;
 import com.example.demo.domai.dtos.ClienteDTO;
 import com.example.demo.repositories.ClienteRepository;
 import com.example.demo.services.exceptions.ObjectNotFoundException;
@@ -45,4 +46,12 @@ public class ClienteService {
         oldObj.setEmail(objDTO.getEmail());
         oldObj.setSenha(objDTO.getSenha());
     }
+    
+    public void delete(Integer id) {
+    	Cliente obj = findById(id); 	
+    	repository.deleteById(id);
+    }
+    
+    
+    
 }

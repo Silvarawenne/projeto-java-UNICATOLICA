@@ -2,6 +2,7 @@ package com.example.demo.domai.dtos;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 
 import com.example.demo.domai.Chamado;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,14 +18,26 @@ public class ChamadoDTO implements Serializable {
     
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataFechamento;
+    
+    @NotNull(message = "O campo PRIORIDADE é requerido")
     private Integer prioridade;
-    private String nomePrioridade; 
+    private String nomePrioridade;
+    
+    @NotNull(message = "O campo STATUS é requerido")
     private Integer status;
-    private String nomeStatus; 
+    private String nomeStatus;
+    
+    @NotNull(message = "O campo TÍTULO é requerido")
     private String titulo;
+    
+    @NotNull(message = "O campo OBSERVAÇÕES é requerido")
     private String observacoes;
+    
+    @NotNull(message = "O campo TÉCNICO é requerido")
     private Integer tecnicoId;
     private String nomeTecnico; 
+    
+    @NotNull(message = "O campo CLIENTE é requerido")
     private Integer clienteId;
     private String nomeCliente; 
     
@@ -49,9 +62,8 @@ public class ChamadoDTO implements Serializable {
         this.clienteId = obj.getCliente().getId();
         this.nomeCliente = obj.getCliente().getNome();
     }
-
-    // Crie os Getters e Setters para TODOS os campos acima
-    // (Use o atalho Alt + Shift + S -> R)
+    
+    
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

@@ -51,7 +51,12 @@ public class TecnicoService {
         oldObj.setCpf(objDTO.getCpf());
         oldObj.setEmail(objDTO.getEmail());
         oldObj.setSenha(objDTO.getSenha());
-        
+    }
+    
+    
+    public void delete(Integer id) {
+    	Tecnico obj = findById(id); 	
+    	repository.deleteById(id);
     }
 
 }

@@ -1,10 +1,20 @@
 package com.example.demo.services;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+
+import com.example.demo.domai.Cliente;
+import com.example.demo.domai.Tecnico;
+import com.example.demo.domai.dtos.ChamadoDTO;
+import com.example.demo.domain.num.Prioridade;
+import com.example.demo.domain.num.Status;
 import com.example.demo.domai.Chamado;
 import com.example.demo.repositories.ChamadoRepository;
 import com.example.demo.services.exceptions.ObjectNotFoundException;
@@ -15,6 +25,10 @@ public class ChamadoService {
 	
 	@Autowired
 	private ChamadoRepository repository;
+	@Autowired
+	private TecnicoService tecnicoService;
+	@Autowired
+	private ClienteService clienteService;
 	
 	public Chamado findById(Integer id) {
 		Optional<Chamado> obj = repository.findById(id);
@@ -24,5 +38,47 @@ public class ChamadoService {
 	public List<Chamado> findAll(){
 		return repository.findAll();
 	}
+	
+	
+	public Chamado create (ChamadoDTO objDTO) {
+		return repository.save(fromDTO(objDTO));
+	}
+	
+	public Chamado update(Integer id, @Valid ChamadoDTO objDTO) {
+		objDTO.setId(id);
+		Chamado oldObj = findById(id);
+		oldObj = fromDTO(objDTO);
+		return repository.save(oldObj);
+	}
+	
+	
+	private Chamado fromDTO(ChamadoDTO objDTO) {
+		Tecnico tecnico = tecnicoService.findById(objDTO.getTecnicoId());
+		Cliente cliente = clienteService.findById(objDTO.getClienteId());
+		
+		Chamado chamado = new Chamado();
+		if(objDTO.getId() != null) {
+			chamado.setId(objDTO.getId());
+		}
+		
+		if(objDTO.getStatus().equals(2)) {
+			chamado.setDataFechamento(LocalDateTime.now());
+		}
+		
+		chamado.setTecnico(tecnico);
+		chamado.setCliente(cliente);
+		chamado.setPrioridade(Prioridade.toEnum(objDTO.getPrioridade()));
+		chamado.setStatus(Status.toEnum(objDTO.getStatus()));
+		chamado.setTitulo(objDTO.getTitulo());
+		chamado.setObservacoes(objDTO.getObservacoes());
+		
+		return chamado;
+	}
+	
+	
+	public void delete(Integer id) {
+    	Chamado obj = findById(id); 	
+    	repository.deleteById(id);
+    }
 
 }

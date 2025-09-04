@@ -30,7 +30,7 @@ public class TecnicoDTO implements Serializable {
 	
 	@NotBlank(message = "O campo SENHA é requerido")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	protected String senha; // O campo senha
+	protected String senha;
 	
 	protected Set<Integer> perfis = new HashSet<>();
 	
@@ -60,6 +60,8 @@ public class TecnicoDTO implements Serializable {
     public void setCpf(String cpf) { this.cpf = cpf; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
     public Set<Perfil> getPerfis() {
@@ -67,14 +69,5 @@ public class TecnicoDTO implements Serializable {
     }
     public void addPerfil(Perfil perfil) {
     	this.perfis.add(perfil.getCodigo());
-    }
-
-    // ESTES SÃO OS MÉTODOS QUE ESTAVAM FALTANDO
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 }

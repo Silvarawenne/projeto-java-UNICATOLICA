@@ -23,14 +23,13 @@ public class Tecnico extends Pessoa {
     @OneToMany(mappedBy = "tecnico")
     private List<Chamado> chamados = new ArrayList<>();
 
-    // A lista de perfis é declarada E INICIALIZADA aqui
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "PERFIS_TECNICO")
     private Set<Integer> perfis = new HashSet<>();
 
     public Tecnico() {
         super();
-        addPerfil(Perfil.TECNICO); // Define o perfil padrão
+        addPerfil(Perfil.TECNICO);
     }
 
     public Tecnico(Integer id, String nome, String cpf, String email, String senha) {
@@ -38,11 +37,15 @@ public class Tecnico extends Pessoa {
         addPerfil(Perfil.TECNICO);
     }
 
-    public Tecnico(TecnicoDTO objDTO) {
-		// TODO Auto-generated constructor stub
-	}
-
-
+    public Tecnico(TecnicoDTO obj) {
+        super();
+        this.id = obj.getId();
+        this.nome = obj.getNome();
+        this.cpf = obj.getCpf();
+        this.email = obj.getEmail();
+        this.senha = obj.getSenha();
+        addPerfil(Perfil.TECNICO);
+    }
 
 	public void addPerfil(Perfil perfil) {
         this.perfis.add(perfil.getCodigo());
@@ -52,7 +55,6 @@ public class Tecnico extends Pessoa {
 		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
 	}
 
-    // Getters e Setters para 'chamados'
     public List<Chamado> getChamados() {
         return chamados;
     }
@@ -60,6 +62,4 @@ public class Tecnico extends Pessoa {
     public void setChamados(List<Chamado> chamados) {
         this.chamados = chamados;
     }
-    
-    
 }
