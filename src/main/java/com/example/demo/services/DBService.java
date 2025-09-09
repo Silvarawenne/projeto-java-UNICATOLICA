@@ -5,9 +5,9 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domai.Chamado;
-import com.example.demo.domai.Cliente;
-import com.example.demo.domai.Tecnico;
+import com.example.demo.domain.Chamado;
+import com.example.demo.domain.Cliente;
+import com.example.demo.domain.Tecnico;
 import com.example.demo.domain.num.Prioridade;
 import com.example.demo.domain.num.Status;
 import com.example.demo.repositories.ChamadoRepository;

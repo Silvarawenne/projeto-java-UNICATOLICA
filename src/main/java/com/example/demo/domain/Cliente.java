@@ -1,17 +1,18 @@
-package com.example.demo.domai;
+package com.example.demo.domain;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.example.demo.domai.dtos.ClienteDTO;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
+import com.example.demo.domain.dtos.ClienteDTO;
 import com.example.demo.domain.num.Perfil;
 
 @Entity

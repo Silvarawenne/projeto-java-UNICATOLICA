@@ -8,14 +8,12 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-
-import com.example.demo.domai.Cliente;
-import com.example.demo.domai.Tecnico;
-import com.example.demo.domai.dtos.ChamadoDTO;
+import com.example.demo.domain.Chamado;
+import com.example.demo.domain.Cliente;
+import com.example.demo.domain.Tecnico;
+import com.example.demo.domain.dtos.ChamadoDTO;
 import com.example.demo.domain.num.Prioridade;
 import com.example.demo.domain.num.Status;
-import com.example.demo.domai.Chamado;
 import com.example.demo.repositories.ChamadoRepository;
 import com.example.demo.services.exceptions.ObjectNotFoundException;
 
@@ -45,7 +43,7 @@ public class ChamadoService {
 	}
 	
 	public Chamado update(Integer id, @Valid ChamadoDTO objDTO) {
-		objDTO.setId(id);
+		objDTO.setId(null);
 		Chamado oldObj = findById(id);
 		oldObj = fromDTO(objDTO);
 		return repository.save(oldObj);

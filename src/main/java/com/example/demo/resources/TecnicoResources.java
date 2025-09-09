@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
-import com.example.demo.domai.Tecnico;
-import com.example.demo.domai.dtos.TecnicoDTO;
+import com.example.demo.domain.Tecnico;
+import com.example.demo.domain.dtos.TecnicoDTO;
 import com.example.demo.services.TecnicoService;
 
 @RestController

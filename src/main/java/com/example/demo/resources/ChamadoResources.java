@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.demo.domai.Chamado;
-import com.example.demo.domai.dtos.ChamadoDTO;
+import com.example.demo.domain.Chamado;
+import com.example.demo.domain.dtos.ChamadoDTO;
 import com.example.demo.services.ChamadoService;
 
 

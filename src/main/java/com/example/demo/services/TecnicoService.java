@@ -6,9 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domai.Tecnico;
+import com.example.demo.repositories.PessoaRepository;
+import com.example.demo.services.exceptions.DataIntegrityViolationException;
 import com.example.demo.repositories.TecnicoRepository;
-import com.example.demo.domai.dtos.TecnicoDTO;
+import com.example.demo.domain.Pessoa;
+import com.example.demo.domain.Tecnico;
+import com.example.demo.domain.dtos.TecnicoDTO;
 import com.example.demo.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -17,6 +20,9 @@ public class TecnicoService {
 	
 	@Autowired
 	private TecnicoRepository repository;
+	
+	@Autowired
+	private PessoaRepository pessoaRepository;
 	
 	public Tecnico findById(Integer id) {
 		
@@ -31,17 +37,16 @@ public class TecnicoService {
 	
 	public Tecnico create(TecnicoDTO objDTO){
 		objDTO.setId(null);
+		validaPorCpfEEmail(objDTO);
 		Tecnico newObj = new Tecnico(objDTO);
 		return repository.save(newObj);
 	}
 	
 	public Tecnico update(Integer id, TecnicoDTO objDTO) {
-        objDTO.setId(id); // Garante que o ID no DTO é o mesmo da URL
-        Tecnico oldObj = findById(id); // Busca o técnico existente no banco
-        
-        updateData(oldObj, objDTO); 
-        
-        // Salva as alterações no objeto existente
+        objDTO.setId(id); 
+        Tecnico oldObj = findById(id); 
+        validaPorCpfEEmail(objDTO);
+        updateData(oldObj, objDTO);
         return repository.save(oldObj);
     }
 
@@ -58,5 +63,19 @@ public class TecnicoService {
     	Tecnico obj = findById(id); 	
     	repository.deleteById(id);
     }
+    
+    private void validaPorCpfEEmail(TecnicoDTO objDTO) {
+        Optional<Pessoa> obj = pessoaRepository.findByCpf(objDTO.getCpf());
+        if (obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+            throw new DataIntegrityViolationException("CPF já cadastrado no sistema!");
+        }
+
+        obj = pessoaRepository.findByEmail(objDTO.getEmail());
+        if (obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+            throw new DataIntegrityViolationException("E-mail já cadastrado no sistema!");
+        }
+    }
+        
+        
 
 }

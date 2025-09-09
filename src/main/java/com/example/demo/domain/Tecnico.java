@@ -1,4 +1,4 @@
-package com.example.demo.domai;
+package com.example.demo.domain;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
-import com.example.demo.domai.dtos.TecnicoDTO;
+import com.example.demo.domain.dtos.TecnicoDTO;
 import com.example.demo.domain.num.Perfil;
 
 @Entity

@@ -1,4 +1,4 @@
-package com.example.demo.domai.dtos;
+package com.example.demo.domain.dtos;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
-import com.example.demo.domai.Cliente;
+import com.example.demo.domain.Cliente;
 import com.example.demo.domain.num.Perfil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
