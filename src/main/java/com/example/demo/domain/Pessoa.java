@@ -1,8 +1,9 @@
-package com.example.demo.domain; // Pacote correto!
+package com.example.demo.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set; // <-- NOVO IMPORT para Set
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,10 +11,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Table; // <-- NOVO IMPORT
+import javax.persistence.Table;
+import com.example.demo.domain.num.Perfil; // <-- NOVO IMPORT para Perfil
 
 @Entity
-@Table(name = "PESSOA") // <-- ADICIONE ISTO
+@Table(name = "PESSOA")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Pessoa implements Serializable {
 
@@ -42,53 +44,22 @@ public abstract class Pessoa implements Serializable {
 		this.senha = senha;
 	}
 
-	public Integer getId() {
-		return id;
-	}
+	// ... (Getters e Setters existentes) ...
+	public Integer getId() { return id; }
+	public void setId(Integer id) { this.id = id; }
+	public String getNome() { return nome; }
+	public void setNome(String nome) { this.nome = nome; }
+	public String getCpf() { return cpf; }
+	public void setCpf(String cpf) { this.cpf = cpf; }
+	public String getEmail() { return email; }
+	public void setEmail(String email) { this.email = email; }
+	public String getSenha() { return senha; }
+	public void setSenha(String senha) { this.senha = senha; }
+	public LocalDateTime getDataCriacao() { return dataCriacao; }
+	public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public LocalDateTime getDataCriacao() {
-		return dataCriacao;
-	}
-
-	public void setDataCriacao(LocalDateTime dataCriacao) {
-		this.dataCriacao = dataCriacao;
-	}
+	// *** ADICIONE ESTE MÉTODO ABSTRATO ***
+	public abstract Set<Perfil> getPerfis(); // <-- NOVO MÉTODO
 
 	@Override
 	public int hashCode() {

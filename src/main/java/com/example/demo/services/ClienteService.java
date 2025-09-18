@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Cliente;
@@ -21,6 +22,8 @@ public class ClienteService {
     private ClienteRepository repository;
     @Autowired
     private PessoaRepository pessoaRepository;
+    @Autowired
+    private BCryptPasswordEncoder pe;
 
     public Cliente findById(Integer id) {
         Optional<Cliente> obj = repository.findById(id);
@@ -32,17 +35,24 @@ public class ClienteService {
     }
 
     public Cliente create(ClienteDTO objDTO) {
-        objDTO.setId(null);
-        validaPorCpfEEmail(objDTO);
-        Cliente newObj = new Cliente(objDTO);
-        return repository.save(newObj);
+    	objDTO.setId(null);
+    	validaPorCpfEEmail(objDTO);
+    	Cliente newCliente = new Cliente(objDTO);
+    	newCliente.setSenha(pe.encode(objDTO.getSenha()));
+    	return repository.save(newCliente);
     }
 
     public Cliente update(Integer id, ClienteDTO objDTO) {
         objDTO.setId(id);
         Cliente oldObj = findById(id);
         validaPorCpfEEmail(objDTO);
-        oldObj = new Cliente(objDTO);
+        oldObj.setNome(objDTO.getNome());
+        oldObj.setCpf(objDTO.getCpf());
+        oldObj.setEmail(objDTO.getEmail());
+        
+        if(objDTO.getSenha() != null && !objDTO.getSenha().isEmpty()) {
+        	oldObj.setSenha(pe.encode(objDTO.getSenha()));
+        }
         return repository.save(oldObj);
     }
 
