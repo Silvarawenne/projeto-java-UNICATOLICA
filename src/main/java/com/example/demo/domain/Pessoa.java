@@ -1,4 +1,4 @@
-package com.example.demo.domain;
+package com.example.demo.domain; // Pacote correto!
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,11 +10,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table; // <-- NOVO IMPORT
 
 @Entity
-
+@Table(name = "PESSOA") // <-- ADICIONE ISTO
 @Inheritance(strategy = InheritanceType.JOINED)
-
 public abstract class Pessoa implements Serializable {
 
 	private static final long serialVersionUID = 1L;

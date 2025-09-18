@@ -1,4 +1,4 @@
-package com.example.demo.domain;
+package com.example.demo.domain; // Pacote correto!
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,11 +11,15 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.Table; // <-- NOVO IMPORT
+import javax.persistence.PrimaryKeyJoinColumn; // <-- NOVO IMPORT
 
 import com.example.demo.domain.dtos.TecnicoDTO;
 import com.example.demo.domain.num.Perfil;
 
 @Entity
+@Table(name = "TECNICO") // <-- ADICIONE ISTO
+@PrimaryKeyJoinColumn(name = "id") // <-- ADICIONE ISTO
 public class Tecnico extends Pessoa {
     
     private static final long serialVersionUID = 1L;

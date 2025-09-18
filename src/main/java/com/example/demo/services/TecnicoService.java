@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.repositories.PessoaRepository;
@@ -24,6 +25,9 @@ public class TecnicoService {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
+	
 	public Tecnico findById(Integer id) {
 		
 		Optional<Tecnico> obj = repository.findById(id);
@@ -39,32 +43,35 @@ public class TecnicoService {
 		objDTO.setId(null);
 		validaPorCpfEEmail(objDTO);
 		Tecnico newObj = new Tecnico(objDTO);
+		newObj.setSenha(encoder.encode(objDTO.getSenha()));
 		return repository.save(newObj);
 	}
 	
 	public Tecnico update(Integer id, TecnicoDTO objDTO) {
-        objDTO.setId(id); 
-        Tecnico oldObj = findById(id); 
-        validaPorCpfEEmail(objDTO);
-        updateData(oldObj, objDTO);
-        return repository.save(oldObj);
+		objDTO.setId(id);
+		Tecnico oldObj = findById(id);
+		
+		if(!objDTO.getCpf().equals(oldObj.getCpf()) || !objDTO.getEmail().equals(oldObj.getEmail())) {
+			validaPorCpfEEmail(objDTO);
+		}
+		
+		if(objDTO.getSenha()!= null && !objDTO.getSenha().isEmpty()) {
+			oldObj.setSenha(encoder.encode(objDTO.getSenha()));
+		}else {
+			objDTO.setSenha(oldObj.getSenha());
+		}
+		
+		oldObj = new Tecnico(objDTO);
+		return repository.save(oldObj);
+	}
+	
+	public void delete(Integer id) {
+        findById(id);
+        repository.deleteById(id);
     }
-
-   
-    private void updateData(Tecnico oldObj, TecnicoDTO objDTO) {
-        oldObj.setNome(objDTO.getNome());
-        oldObj.setCpf(objDTO.getCpf());
-        oldObj.setEmail(objDTO.getEmail());
-        oldObj.setSenha(objDTO.getSenha());
-    }
-    
-    
-    public void delete(Integer id) {
-    	Tecnico obj = findById(id); 	
-    	repository.deleteById(id);
-    }
-    
-    private void validaPorCpfEEmail(TecnicoDTO objDTO) {
+	
+	
+	private void validaPorCpfEEmail(TecnicoDTO objDTO) {
         Optional<Pessoa> obj = pessoaRepository.findByCpf(objDTO.getCpf());
         if (obj.isPresent() && obj.get().getId() != objDTO.getId()) {
             throw new DataIntegrityViolationException("CPF já cadastrado no sistema!");
@@ -75,7 +82,8 @@ public class TecnicoService {
             throw new DataIntegrityViolationException("E-mail já cadastrado no sistema!");
         }
     }
-        
-        
-
+	
+	
 }
+	
+	
