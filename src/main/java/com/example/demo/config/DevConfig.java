@@ -18,7 +18,6 @@ public class DevConfig {
     @Value("${spring.jpa.hibernate.ddl-auto}")
     private String ddl;
 
-    // ADICIONE ESTE CONSTRUTOR PARA VERIFICAR SE A CLASSE É CARREGADA
     public DevConfig() {
         System.out.println("======================================================");
         System.out.println(">>> PERFIL DEV: CLASSE DevConfig FOI CARREGADA <<<");
@@ -26,16 +25,18 @@ public class DevConfig {
     }
 
     @Bean
-    public boolean instanciaDB() {
-        System.out.println(">>> PERFIL DEV: TENTANDO EXECUTAR instanciaDB() <<<");
+    public boolean instantiateDatabase() {
+        System.out.println(">>> PERFIL DEV: TENTANDO EXECUTAR instantiateDatabase() <<<"); // Mensagem atualizada
         
-        if (ddl.equals("create")) {
-            System.out.println(">>> PERFIL DEV: CONDIÇÃO 'create' ATENDIDA. CHAMANDO DBService... <<<");
+        // MUDANÇA AQUI: Agora verifica se é "create" ou "create-drop"
+        if (ddl.equals("create") || ddl.equals("create-drop")) {
+            System.out.println(">>> PERFIL DEV: CONDIÇÃO 'create' ou 'create-drop' ATENDIDA (ddl=" + ddl + "). CHAMANDO DBService... <<<"); // Mensagem atualizada
             this.dbService.instanciaDB();
+            System.out.println(">>> PERFIL DEV: DBService.instanciaDB() EXECUTADO. <<<"); // Nova mensagem
             return true;
         }
         
-        System.out.println(">>> PERFIL DEV: CONDIÇÃO 'create' NÃO ATENDIDA. CARGA DE DADOS CANCELADA. <<<");
+        System.out.println(">>> PERFIL DEV: CONDIÇÃO 'create' ou 'create-drop' NÃO ATENDIDA (ddl=" + ddl + "). CARGA DE DADOS CANCELADA. <<<"); // Mensagem atualizada
         return false;
     }
 }

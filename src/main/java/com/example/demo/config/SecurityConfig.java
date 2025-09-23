@@ -29,17 +29,17 @@ import com.example.demo.services.security.UserDetailsServiceImpl; // AJUSTE O PA
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) // Habilita anotações como @PreAuthorize
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private Environment env;
 	
 	@Autowired
-	private UserDetailsService userDetailsService; // Injete seu UserDetailsService
+	private UserDetailsService userDetailsService;
 	
 	@Autowired
-	private JWTUtil jwtUtil; // Injete seu JWTUtil
+	private JWTUtil jwtUtil;
 	
 	private static final String[] PUBLIC_MATCHERS = {
 			"/h2-console/**"
@@ -53,28 +53,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception{
-		// Permite acesso ao H2 Console em perfil dev
 		if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
 			http.headers().frameOptions().disable();
 		}
 		
-		http.cors().and().csrf().disable(); // Configura CORS e desabilita CSRF
+		http.cors().and().csrf().disable();
 		
 		http.authorizeRequests()
-			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll() // Permite POSTs específicos
-			.antMatchers(PUBLIC_MATCHERS).permitAll() // Permite outros públicos
-			.anyRequest().authenticated(); // Qualquer outra requisição exige autenticação
+			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+			.antMatchers(PUBLIC_MATCHERS).permitAll()
+			.anyRequest().authenticated(); // <--- ONDE A ORDEM DOS FILTROS COMEÇA A IMPORTAR MUITO
 		
+        // === MOVEMOS OS FILTROS JWT PARA DEPOIS DE 'anyRequest().authenticated()' ===
 		// Adiciona o filtro de autenticação JWT
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
 		// Adiciona o filtro de autorização JWT
-		// Este deve vir antes do filtro de autenticação padrão para interceptar tokens em requisições subsequentes
 		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
 		
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Sessão stateless para JWT
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
-	// Configura o AuthenticationManager para usar seu UserDetailsService e BCryptPasswordEncoder
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
@@ -85,14 +83,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 	
-    // Configuração do CORS (se você precisar de uma configuração mais detalhada para o front-end)
-    // Se você já tem uma configuração de CORS global em outro lugar, pode remover este @Bean.
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
-		configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "OPTIONS")); // Permite todos os métodos
+		configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "OPTIONS"));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration); // Aplica a configuração a todos os caminhos
+		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
 }

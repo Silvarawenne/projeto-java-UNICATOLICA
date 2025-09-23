@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize; 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +28,15 @@ public class TecnicoResources {
 	@Autowired
 	private TecnicoService service;
 	
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@GetMapping(value = "/{id}")
     public ResponseEntity<TecnicoDTO> findById(@PathVariable Integer id) {
         Tecnico obj = service.findById(id);
         return ResponseEntity.ok().body(new TecnicoDTO(obj));
     }
 	
+
+	@PreAuthorize("hasRole('ADMIN')") 
 	@GetMapping
 	public ResponseEntity<List<TecnicoDTO>> findAll(){
 		List<Tecnico> list = service.findAll();
@@ -42,6 +46,7 @@ public class TecnicoResources {
 		return ResponseEntity.ok().body(listDTO);
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@PostMapping
 	public ResponseEntity<TecnicoDTO> create (@Valid @RequestBody TecnicoDTO objDTO){
 		Tecnico newObj = service.create(objDTO);
@@ -52,6 +57,8 @@ public class TecnicoResources {
 		return ResponseEntity.created(uri).build();
 	}
 	
+
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@PutMapping(value="/{id}")
 	public ResponseEntity<TecnicoDTO> update(@PathVariable Integer id, @Valid @RequestBody TecnicoDTO objDTO){
 			Tecnico obj = service.update(id, objDTO);
@@ -59,18 +66,11 @@ public class TecnicoResources {
 		
 	}
 	
-	
+
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@DeleteMapping (value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	
-	
-	
-	
-	
-	
-
 }

@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize; 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +23,6 @@ import com.example.demo.domain.Chamado;
 import com.example.demo.domain.dtos.ChamadoDTO;
 import com.example.demo.services.ChamadoService;
 
-
-
 @RestController
 @RequestMapping(value = "/chamados")
 public class ChamadoResources {
@@ -31,12 +30,16 @@ public class ChamadoResources {
 	@Autowired
 	private ChamadoService service;
 	
+	
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@GetMapping(value="/{id}")
 	public ResponseEntity<ChamadoDTO> findById(@PathVariable Integer id){
 		Chamado obj = service.findById(id);
 		return ResponseEntity.ok().body(new ChamadoDTO(obj));
-		}
+	}
 	
+
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@GetMapping
 	public ResponseEntity<List<ChamadoDTO>> findAll(){
 		List<Chamado> list = service.findAll();
@@ -44,7 +47,8 @@ public class ChamadoResources {
 									  .map(obj -> new ChamadoDTO(obj))
 									  .collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
-		}
+	}
+	
 	
 	@PostMapping
 	public ResponseEntity<ChamadoDTO> create (@Valid @RequestBody ChamadoDTO objDTO){
@@ -56,18 +60,19 @@ public class ChamadoResources {
 		return ResponseEntity.created(uri).build();
 	}
 	
+
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<ChamadoDTO> update(@PathVariable Integer id, @Valid @RequestBody ChamadoDTO objDTO){
 		Chamado newOBJ = service.update(id, objDTO);
 		return ResponseEntity.ok().body(new ChamadoDTO(newOBJ));
 	}
 	
-	
+
+	@PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')") 
 	@DeleteMapping (value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-
 }
