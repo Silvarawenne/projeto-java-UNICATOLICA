@@ -1,18 +1,7 @@
 package com.example.demo.domain.num;
 
-/**
- * The Enum Perfil. Define os tipos de perfis de usuário no sistema.
- * @author wagner.braga
- */
 public enum Perfil {
 
-	/*
-	 * Considerando que este enum funciona com um array, a visualização a nível de banco os posicionaria de acordo
-	 * com  sequência definida aqui iniciando por 0. Dessa forma, caso fosse adicionado mais um item ao enum, esta
-	 * classificação poderia perder a ordem definida inicialmente. A solução mais simples é adicionar um código
-	 * com valor fixo e uma descrição, conforme feito a seguir. Assim a sequência definida inicialmente não se perde
-	 * e pode-se adicionar mais perfil ao enum sem prejuízos.
-	 */
 
 	/** The admin. */
 	ADMIN(0, "ROLE_ADMIN"),

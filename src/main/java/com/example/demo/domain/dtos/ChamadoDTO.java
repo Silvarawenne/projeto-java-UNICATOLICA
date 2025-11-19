@@ -7,12 +7,6 @@ import javax.validation.constraints.NotNull;
 import com.example.demo.domain.Chamado;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-/**
- * Data Transfer Object (DTO) para a entidade Chamado.
- * Utilizado para trafegar dados entre as camadas da aplicação,
- * especialmente na comunicação com a API REST, evitando expor
- * a entidade de domínio diretamente e facilitando validações.
- */
 public class ChamadoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;

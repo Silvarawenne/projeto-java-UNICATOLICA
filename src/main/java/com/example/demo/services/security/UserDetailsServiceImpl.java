@@ -14,15 +14,25 @@ import com.example.demo.security.jwt.UserSS;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private PessoaRepository pessoaRepository; // Para buscar o usuário no banco
+    private PessoaRepository pessoaRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Busca a Pessoa (Tecnico ou Cliente) pelo email
+        
+        // 1. Buscamos a pessoa no banco. Se não achar, ele já lança o erro aqui.
         Pessoa pessoa = pessoaRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + email));
 
-        // Retorna um objeto UserSS (sua implementação de UserDetails)
+        // 2. SE chegou aqui, é porque achou o usuário. Vamos imprimir o que ele achou:
+        System.out.println("===============================================");
+        System.out.println("=== DEBUG LOGIN (UserDetailsServiceImpl) ===");
+        System.out.println("Email digitado: " + email);
+        System.out.println("Email vindo do banco: " + pessoa.getEmail());
+        System.out.println("Senha vinda do banco: [" + pessoa.getSenha() + "]"); // Coloquei colchetes para ver se tem espaço
+        System.out.println("Perfis carregados: " + pessoa.getPerfis());
+        System.out.println("===============================================");
+
+        // 3. Retorna o objeto para o Spring Security verificar a senha
         return new UserSS(pessoa.getId(), pessoa.getEmail(), pessoa.getSenha(), pessoa.getPerfis());
     }
 }
