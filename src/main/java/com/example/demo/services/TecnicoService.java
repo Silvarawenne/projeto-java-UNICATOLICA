@@ -49,20 +49,22 @@ public class TecnicoService {
 	
 	public Tecnico update(Integer id, TecnicoDTO objDTO) {
 		objDTO.setId(id);
-		Tecnico oldObj = findById(id);
 		
+		Tecnico oldObj = findById(id);
 		if(!objDTO.getCpf().equals(oldObj.getCpf()) || !objDTO.getEmail().equals(oldObj.getEmail())) {
 			validaPorCpfEEmail(objDTO);
 		}
-		
-		if(objDTO.getSenha()!= null && !objDTO.getSenha().isEmpty()) {
-			oldObj.setSenha(encoder.encode(objDTO.getSenha()));
-		}else {
+		if(objDTO.getSenha() != null && !objDTO.getSenha().isEmpty()) {
+			objDTO.setSenha(encoder.encode(objDTO.getSenha()));
+		} else {
 			objDTO.setSenha(oldObj.getSenha());
 		}
 		
-		oldObj = new Tecnico(objDTO);
-		return repository.save(oldObj);
+		Tecnico newObj = new Tecnico(objDTO);
+		newObj.setId(oldObj.getId());
+		newObj.setDataCriacao(oldObj.getDataCriacao()); 
+
+		return repository.save(newObj);
 	}
 	
 	public void delete(Integer id) {
