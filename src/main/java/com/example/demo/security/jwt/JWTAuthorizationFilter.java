@@ -1,6 +1,10 @@
 package com.example.demo.security.jwt;
 
 import java.io.IOException;
+import java.util.List; // NOVO
+import java.util.stream.Collectors; // NOVO
+import org.springframework.security.core.authority.SimpleGrantedAuthority; // NOVO
+import org.springframework.security.core.GrantedAuthority; // NOVO
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,16 +14,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import io.jsonwebtoken.Claims; // NOVO
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private JWTUtil jwtUtil;
-	private UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService; // Mantemos para o construtor, mas não usamos mais
 
-    // Construtor que recebe AuthenticationManager, JWTUtil e UserDetailsService
+    // Construtor
 	public JWTAuthorizationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, UserDetailsService userDetailsService) {
 		super(authenticationManager);
 		this.jwtUtil = jwtUtil;
@@ -31,28 +36,40 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		String header = request.getHeader("Authorization"); // Pega o cabeçalho Authorization
+		String header = request.getHeader("Authorization"); 
 
-		// Verifica se o cabeçalho existe e começa com "Bearer "
 		if (header != null && header.startsWith("Bearer ")) {
-			// Tenta obter o token de autenticação a partir do token JWT
-			UsernamePasswordAuthenticationToken auth = getAuthentication(header.substring(7)); // Remove "Bearer "
-			// Se a autenticação foi bem-sucedida, define-a no contexto de segurança
+			UsernamePasswordAuthenticationToken auth = getAuthentication(header.substring(7)); 
 			if (auth != null) {
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			}
 		}
-		chain.doFilter(request, response); // Continua o filtro
+		chain.doFilter(request, response);
 	}
 
-    // Método auxiliar para obter o token de autenticação a partir do token JWT
+    // MÉTODO getAuthentication AGORA LÊ AS PERMISSÕES DIRETAMENTE DO TOKEN
 	private UsernamePasswordAuthenticationToken getAuthentication(String token) {
-		if (jwtUtil.tokenValido(token)) { // Valida o token JWT
-			String username = jwtUtil.getUsername(token); // Pega o username (email) do token
-			// Carrega os detalhes do usuário usando o UserDetailsService
-			UserDetails user = userDetailsService.loadUserByUsername(username);
-			// Retorna um token de autenticação do Spring Security com os detalhes do usuário e suas autoridades
-			return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+		if (jwtUtil.tokenValido(token)) {
+            
+            // 1. Tenta obter os Claims (conteúdo) do token
+			Claims claims = jwtUtil.getClaims(token); // <--- ATENÇÃO AQUI!
+            
+            if (claims == null) {
+                return null;
+            }
+
+			String username = claims.getSubject();
+            
+            // 2. Extrai a lista de roles (que gravamos no passo anterior)
+            List<?> rolesRaw = claims.get("roles", List.class);
+            
+            // 3. Converte as roles (String) para GrantedAuthority
+            List<GrantedAuthority> authorities = rolesRaw.stream()
+                    .map(role -> new SimpleGrantedAuthority((String) role))
+                    .collect(Collectors.toList());
+            
+			// 4. Retorna um novo token de autenticação sem bater no banco (Stateless)
+			return new UsernamePasswordAuthenticationToken(username, null, authorities);
 		}
 		return null;
 	}
