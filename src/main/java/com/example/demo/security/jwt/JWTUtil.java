@@ -1,6 +1,7 @@
 package com.example.demo.security.jwt;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
 
 @Component
 public class JWTUtil {
@@ -19,9 +19,11 @@ public class JWTUtil {
 	@Value("${jwt.secret}")
 	private String secret;
 	
-	public String generateToken(String username) {
+	// ALTERADO: Agora aceita a lista de roles (perfis) para gravar no token
+	public String generateToken(String username, List<String> roles) {
 		return Jwts.builder()
-				.setSubject(username) 
+				.setSubject(username)
+				.claim("roles", roles) // <--- O PULO DO GATO: Aqui gravamos as permissões!
 				.setExpiration(new Date(System.currentTimeMillis() + expiration))
 				.signWith(SignatureAlgorithm.HS512, secret.getBytes()) 
 				.compact(); 
@@ -56,5 +58,4 @@ public class JWTUtil {
 			return null; 
 		}
 	}
-
 }

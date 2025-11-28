@@ -14,6 +14,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.domain.dtos.CredenciaisDTO; // Sua classe DTO para credenciais de login
@@ -52,12 +55,22 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		// Pega o UserSS (seu UserDetails) do resultado da autenticação
-		String username = ((UserSS) authResult.getPrincipal()).getUsername();
-		// Gera o token JWT
-		String token = jwtUtil.generateToken(username);
+		
+		// Pega o usuário logado (UserSS)
+		UserSS user = (UserSS) authResult.getPrincipal();
+		String username = user.getUsername();
+		
+		// NOVO: Extrai as roles (perfis) do usuário e transforma em Lista de Strings
+		// Necessário importar: java.util.stream.Collectors e org.springframework.security.core.GrantedAuthority
+		List<String> roles = user.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.collect(Collectors.toList());
+
+		// Gera o token passando o username E as roles
+		String token = jwtUtil.generateToken(username, roles);
+		
 		// Adiciona o token no cabeçalho da resposta
-		response.setHeader("access-control-expose-headers", "Authorization"); // Expõe o cabeçalho Authorization
+		response.setHeader("access-control-expose-headers", "Authorization");
 		response.setHeader("Authorization", "Bearer " + token);
 	}
 
