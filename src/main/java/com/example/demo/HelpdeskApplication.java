@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired; // Importante
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // Importante
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+	    // Excluímos este fallback para que o Spring use sua implementação customizada (JPA)
+	    UserDetailsServiceAutoConfiguration.class 
+	})
 public class HelpdeskApplication implements CommandLineRunner {
 
     // INJETAMOS O ENCODER AQUI
