@@ -1,10 +1,10 @@
 package com.example.demo.security.jwt;
 
 import java.io.IOException;
-import java.util.List; // NOVO
-import java.util.stream.Collectors; // NOVO
-import org.springframework.security.core.authority.SimpleGrantedAuthority; // NOVO
-import org.springframework.security.core.GrantedAuthority; // NOVO
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,25 +13,26 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority; 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import io.jsonwebtoken.Claims; // NOVO
+import io.jsonwebtoken.Claims; 
+
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private JWTUtil jwtUtil;
-	private UserDetailsService userDetailsService; // Mantemos para o construtor, mas não usamos mais
+	private UserDetailsService userDetailsService; 
 
-    // Construtor
 	public JWTAuthorizationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, UserDetailsService userDetailsService) {
 		super(authenticationManager);
 		this.jwtUtil = jwtUtil;
 		this.userDetailsService = userDetailsService;
 	}
 
-    // Este método é executado para cada requisição
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -47,30 +48,34 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		chain.doFilter(request, response);
 	}
 
-    // MÉTODO getAuthentication AGORA LÊ AS PERMISSÕES DIRETAMENTE DO TOKEN
-	private UsernamePasswordAuthenticationToken getAuthentication(String token) {
-		if (jwtUtil.tokenValido(token)) {
-            
-            // 1. Tenta obter os Claims (conteúdo) do token
-			Claims claims = jwtUtil.getClaims(token); // <--- ATENÇÃO AQUI!
-            
-            if (claims == null) {
-                return null;
-            }
+    // MÉTODO FINALIZADO: LÊ AS PERMISSÕES DIRETAMENTE DO TOKEN
+	// JWTAuthorizationFilter.java (Método getAuthentication)
 
-			String username = claims.getSubject();
-            
-            // 2. Extrai a lista de roles (que gravamos no passo anterior)
-            List<?> rolesRaw = claims.get("roles", List.class);
-            
-            // 3. Converte as roles (String) para GrantedAuthority
-            List<GrantedAuthority> authorities = rolesRaw.stream()
-                    .map(role -> new SimpleGrantedAuthority((String) role))
-                    .collect(Collectors.toList());
-            
-			// 4. Retorna um novo token de autenticação sem bater no banco (Stateless)
-			return new UsernamePasswordAuthenticationToken(username, null, authorities);
-		}
-		return null;
+	private UsernamePasswordAuthenticationToken getAuthentication(String token) {
+	    if (jwtUtil.tokenValido(token)) {
+	        
+	        // REQUER QUE getClaims() em JWTUtil seja PUBLIC!
+	        Claims claims = jwtUtil.getClaims(token);
+	        
+	        if (claims == null) {
+	            return null;
+	        }
+
+	        String username = claims.getSubject();
+	        
+	        // Extrai a lista de roles (A lista de Objetos vem do Claims)
+	        @SuppressWarnings("unchecked")
+	        List<String> rolesRaw = claims.get("roles", List.class);
+	        
+	        // Converte as roles (Strings como "ROLE_ADMIN") para SimpleGrantedAuthority
+	        // Usamos map com cast explícito, que é o que o Spring Boot costuma esperar
+	        Collection<GrantedAuthority> authorities = rolesRaw.stream()
+	                .map(role -> new SimpleGrantedAuthority(role)) 
+	                .collect(Collectors.toList());
+	        
+	        // Retorna o token de autenticação sem bater no banco (STATELESS)
+	        return new UsernamePasswordAuthenticationToken(username, null, authorities);
+	    }
+	    return null;
 	}
 }

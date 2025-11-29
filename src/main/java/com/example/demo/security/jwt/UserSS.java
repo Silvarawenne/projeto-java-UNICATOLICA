@@ -1,4 +1,4 @@
-package com.example.demo.security.jwt; // Ajuste o pacote se necessário
+package com.example.demo.security.jwt;
 
 import java.util.Collection;
 import java.util.Set;
@@ -10,24 +10,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.domain.num.Perfil; // Seu enum de Perfil
 
-public class UserSS implements UserDetails { // 'SS' de Spring Security ou "Security User"
+public class UserSS implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
     private Integer id;
     private String email;
     private String senha;
-    private Collection<? extends GrantedAuthority> authorities; // Perfis/Autorizações do usuário
+    private Collection<? extends GrantedAuthority> authorities;
 
+    // CORREÇÃO FINAL: Usa a descrição do Enum (que JÁ tem ROLE_)
     public UserSS(Integer id, String email, String senha, Set<Perfil> perfis) {
         super();
         this.id = id;
         this.email = email;
         this.senha = senha;
         
-        // Mapeia Perfis para GrantedAuthority, garantindo o prefixo "ROLE_"
+        // Mapeia Perfis para GrantedAuthority. x.getDescricao() JÁ contém "ROLE_"
         this.authorities = perfis.stream()
-                                 .map(x -> new SimpleGrantedAuthority("ROLE_" + x.getDescricao())) // <--- A string AGORA é ROLE_ADMIN
+                                 .map(x -> new SimpleGrantedAuthority(x.getDescricao()))
                                  .collect(Collectors.toSet());
     }
 
@@ -47,7 +48,7 @@ public class UserSS implements UserDetails { // 'SS' de Spring Security ou "Secu
 
     @Override
     public String getUsername() {
-        return email; // Retorna o email como username para o Spring Security
+        return email;
     }
 
     @Override
@@ -70,7 +71,6 @@ public class UserSS implements UserDetails { // 'SS' de Spring Security ou "Secu
         return true;
     }
 
-    // Método auxiliar para verificar se o usuário tem um determinado perfil
     public boolean hasRole(Perfil perfil) {
         return getAuthorities().contains(new SimpleGrantedAuthority(perfil.getDescricao()));
     }
