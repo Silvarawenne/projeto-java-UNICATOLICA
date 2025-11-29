@@ -50,6 +50,7 @@ public class ChamadoResources {
 	}
 	
 	
+	@PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE', 'TECNICO')") // ⚠️ CORREÇÃO!
 	@PostMapping
 	public ResponseEntity<ChamadoDTO> create (@Valid @RequestBody ChamadoDTO objDTO){
 		Chamado obj = service.create(objDTO);
