@@ -46,32 +46,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	};
 	
 	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/login", // O filtro de autenticação JWT vai interceptar este
-			"/clientes",
-			"/tecnicos"
-	};
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception{
-		if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
-			http.headers().frameOptions().disable();
+			"/login", 
+			"/clientes" // Deixamos /clientes, pois assumimos que o cadastro de cliente é público
+			// REMOVEMOS "/tecnicos" daqui
+		};
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception{
+		    if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
+		        http.headers().frameOptions().disable();
+		    }
+		    
+		    http.cors().and().csrf().disable();
+		    
+		    http.authorizeRequests()
+		        // Agora, o POST /tecnicos CAI AQUI, sendo encaminhado para o filtro JWT
+		        .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll() 
+		        .antMatchers(PUBLIC_MATCHERS).permitAll()
+		        .anyRequest().authenticated(); 
+
+		    // O restante do seu código está correto para o JWT (Filtros e STATELESS)
+		    http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+		    http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
+		    
+		    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		}
-		
-		http.cors().and().csrf().disable();
-		
-		http.authorizeRequests()
-			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-			.antMatchers(PUBLIC_MATCHERS).permitAll()
-			.anyRequest().authenticated(); // <--- ONDE A ORDEM DOS FILTROS COMEÇA A IMPORTAR MUITO
-		
-        // === MOVEMOS OS FILTROS JWT PARA DEPOIS DE 'anyRequest().authenticated()' ===
-		// Adiciona o filtro de autenticação JWT
-		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
-		// Adiciona o filtro de autorização JWT
-		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
-		
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-	}
 	
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
