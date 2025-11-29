@@ -4,12 +4,17 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.num.Perfil; // Seu enum de Perfil
 
+
+@Service
+@Primary
 public class UserDetailsServiceImpl implements UserDetails {
 
     private static final long serialVersionUID = 1L;
