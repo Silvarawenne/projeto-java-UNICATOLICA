@@ -95,28 +95,41 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // =========================================================================
     // ⚠️ MÉTODO CORRIGIDO PARA LIBERAR O CORS NA URL DO VERSEL
     // =========================================================================
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        
-        // 1. URLs PERMITIDAS: Adicione a URL do seu Front-end no Vercel aqui
-        configuration.setAllowedOrigins(Arrays.asList(
-            "https://helpdeskprojectfrontend.vercel.app", // ⚠️ SUBSTITUA PELA URL REAL!
-            "http://localhost:4200",
-            "http://localhost:8100" // Se você usa Ionic ou outra porta local
-        ));
+ // SecurityConfig.java
 
-        // 2. MÉTODOS HTTP PERMITIDOS
-        configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
-        
-        // 3. HEADERS PERMITIDOS (CRUCIAL: Autoriza o envio do token JWT)
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); 
-        
-        // 4. PERMITE CREDENCIAIS (Para que o header Authorization seja aceito)
-        configuration.setAllowCredentials(true); 
+ // ...
 
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+ // =========================================================================
+ // ⚠️ MÉTODO CORRIGIDO PARA LIBERAR O CORS NA URL DO VERSEL
+ // =========================================================================
+ @Bean
+ CorsConfigurationSource corsConfigurationSource() {
+     CorsConfiguration configuration = new CorsConfiguration();
+     
+     // 1. URLs PERMITIDAS (Manter a sua URL real e localhost)
+     configuration.setAllowedOrigins(Arrays.asList(
+         "https://helpdeskprojectfrontend.vercel.app", // SUA URL REAL
+         "http://localhost:4200",
+         "http://localhost:8100" 
+     ));
+
+     // 2. MÉTODOS HTTP PERMITIDOS
+     configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
+     
+     // 3. HEADERS PERMITIDOS (CORREÇÃO FINAL: Lista abrangente de Headers Angular)
+     configuration.setAllowedHeaders(Arrays.asList(
+         "Authorization", 
+         "Content-Type",
+         "X-Requested-With", // Usado pelo Angular/XMLHttpRequest
+         "Accept",           // Padrão de Requisições HTTP
+         "Origin"            // Necessário para o pre-flight
+     )); 
+     
+     // 4. PERMITE CREDENCIAIS (Crucial para o Header Authorization ser enviado)
+     configuration.setAllowCredentials(true); 
+
+     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+     source.registerCorsConfiguration("/**", configuration);
+     return source;
+ }
 }
