@@ -1,4 +1,4 @@
-package com.example.demo.domain; // Pacote correto!
+package com.example.demo.domain; 
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,20 +11,21 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.Table; // <-- NOVO IMPORT
-import javax.persistence.PrimaryKeyJoinColumn; // <-- NOVO IMPORT
+import javax.persistence.Table; 
+import javax.persistence.PrimaryKeyJoinColumn; 
 
 import com.example.demo.domain.dtos.TecnicoDTO;
 import com.example.demo.domain.num.Perfil;
 
 @Entity
-@Table(name = "TECNICO") // <-- ADICIONE ISTO
-@PrimaryKeyJoinColumn(name = "id") // <-- ADICIONE ISTO
+@Table(name = "TECNICO") 
+@PrimaryKeyJoinColumn(name = "id") 
 public class Tecnico extends Pessoa {
     
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "tecnico")
+    // CORREÇÃO: Forçamos o carregamento EAGER para evitar LazyInitializationException (LIE)
+    @OneToMany(mappedBy = "tecnico", fetch = FetchType.EAGER) // <--- ADICIONADO: fetch = FetchType.EAGER
     private List<Chamado> chamados = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
