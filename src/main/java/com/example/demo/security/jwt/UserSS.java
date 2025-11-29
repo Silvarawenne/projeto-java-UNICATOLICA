@@ -24,9 +24,10 @@ public class UserSS implements UserDetails { // 'SS' de Spring Security ou "Secu
         this.id = id;
         this.email = email;
         this.senha = senha;
-        // Mapeia seus Perfis para GrantedAuthority do Spring Security
+        
+        // Mapeia Perfis para GrantedAuthority, garantindo o prefixo "ROLE_"
         this.authorities = perfis.stream()
-                                 .map(x -> new SimpleGrantedAuthority(x.getDescricao())) // ou x.toString() se usar o nome do enum
+                                 .map(x -> new SimpleGrantedAuthority("ROLE_" + x.getDescricao())) // <--- A string AGORA é ROLE_ADMIN
                                  .collect(Collectors.toSet());
     }
 

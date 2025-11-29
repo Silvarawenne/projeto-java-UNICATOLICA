@@ -64,7 +64,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// Necessário importar: java.util.stream.Collectors e org.springframework.security.core.GrantedAuthority
 		List<String> roles = user.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
-				.map(role -> "ROLE_" + role)
 				.collect(Collectors.toList());
 
 		// Gera o token passando o username E as roles
