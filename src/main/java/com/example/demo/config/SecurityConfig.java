@@ -22,6 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.example.demo.security.jwt.JWTAuthenticationFilter;
 import com.example.demo.security.jwt.JWTAuthorizationFilter;
 import com.example.demo.security.jwt.JWTUtil;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @EnableWebSecurity
@@ -36,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
     
+    @Lazy
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
