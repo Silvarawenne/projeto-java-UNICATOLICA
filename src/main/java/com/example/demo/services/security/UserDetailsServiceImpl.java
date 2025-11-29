@@ -1,82 +1,47 @@
 package com.example.demo.services.security;
 
-import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService; // ⚠️ INTERFACE CORRIGIDA!
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.num.Perfil; // Seu enum de Perfil
-
+import com.example.demo.domain.Pessoa;
+import com.example.demo.repositories.PessoaRepository; 
+import com.example.demo.security.jwt.UserSS; // A classe que implementa UserDetails
 
 @Service
-@Primary
-public class UserDetailsServiceImpl implements UserDetails {
+@Primary // Prioriza este serviço sobre qualquer autoconfiguração
+// A CLASSE DEVE IMPLEMENTAR UserDetailsService, NÃO UserDetails.
+public class UserDetailsServiceImpl implements UserDetailsService { 
+    
+    // Injete o repositório para buscar a pessoa no banco de dados
+    @Autowired
+    private PessoaRepository repository; 
 
-    private static final long serialVersionUID = 1L;
-
-    private Integer id;
-    private String email;
-    private String senha;
-    private Collection<? extends GrantedAuthority> authorities; 
-
-    // CORREÇÃO FINAL: Garante que o prefixo ROLE_ (vindo do Enum Perfil.java) seja a autoridade
-    public UserDetailsServiceImpl(Integer id, String email, String senha, Set<Perfil> perfis) {
-        super();
-        this.id = id;
-        this.email = email;
-        this.senha = senha;
+    // 🛑 CORREÇÃO CRÍTICA 1: CONSTRUTOR VAZIO (ZERO-ARGUMENTOS)
+    // O Spring exige isso para instanciar o Bean @Service na inicialização.
+    public UserDetailsServiceImpl() { 
+        // Construtor padrão para o Spring Boot
+    }
+    
+    // 🛑 CORREÇÃO CRÍTICA 2: IMPLEMENTAÇÃO DO MÉTODO OBRIGATÓRIO
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         
-        // Mapeia os Perfis (que já são "ROLE_ADMIN") para SimpleGrantedAuthority.
-        // Se seu Enum retorna "ROLE_ADMIN", esta linha está perfeita.
-        this.authorities = perfis.stream()
-                                 .map(x -> new SimpleGrantedAuthority(x.getDescricao()))
-                                 .collect(Collectors.toSet());
-    }
-
-    public Integer getId() {
-        return id;
-    }
-    // ... (O restante dos métodos padrões (getPassword, getUsername, isEnabled, etc.) permanece inalterado)
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return senha;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-    
-    // ... (o restante dos métodos padrão)
-    
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+        // 1. Busca a pessoa pelo email no banco
+        Pessoa pessoa = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado! E-mail: " + email));
+        
+        // 2. Converte a entidade Pessoa no objeto de segurança UserSS e o retorna
+        // (Isso assume que a classe UserSS está correta e pronta para receber os dados)
+        return new UserSS(
+                pessoa.getId(), 
+                pessoa.getEmail(), 
+                pessoa.getSenha(), 
+                pessoa.getPerfis()
+        );
     }
 }
