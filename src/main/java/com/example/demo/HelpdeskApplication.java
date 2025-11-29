@@ -5,12 +5,19 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // Importante
 
 @SpringBootApplication(exclude = {
 	    // Excluímos este fallback para que o Spring use sua implementação customizada (JPA)
 	    UserDetailsServiceAutoConfiguration.class 
 	})
+@ComponentScan({
+    "com.example.demo.config",     // Onde está o SecurityConfig
+    "com.example.demo.services",   // Onde está o UserDetailsServiceImpl
+    "com.example.demo.resources",  // Onde estão seus Controllers
+    "com.example.demo"             // O pacote base
+})
 public class HelpdeskApplication implements CommandLineRunner {
 
     // INJETAMOS O ENCODER AQUI
